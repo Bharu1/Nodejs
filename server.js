@@ -1,10 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
 import path from "path";
-import connectToDB from "./config/connectToDB.js"; 
+import connectToDB from "./config/connectToDB.js";
 import userRouter from "./routes/user.js";
 
-dotenv.config({ path: path.join(process.cwd(), "config/config.env") }); 
+dotenv.config({ path: path.join(process.cwd(), "config/config.env") });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
