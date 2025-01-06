@@ -1,27 +1,28 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const userRouter = require('./router');
+import express from "express";
+import dotenv from "dotenv";
+import path from "path";
+import connectToDB from "./config/connectToDB.js"; 
+import userRouter from "./routes/user.js";
+
+dotenv.config({ path: path.join(process.cwd(), "config/config.env") }); 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-dotenv.config();
-
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://abharathi1202:Bharathi@cluster0.eojkb.mongodb.net/databaseName';
-
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch((err) => console.error('Error connecting to MongoDB:', err));
+connectToDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/", userRouter);
 
-app.use('/', userRouter);
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    error: "An unexpected error occurred",
+    details: err.message || "Internal Server Error",
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
